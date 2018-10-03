@@ -1,6 +1,7 @@
 import psycopg2
 from Dbconnect import Databaseconnection
 
+
 class Create_tables:
 
     
@@ -16,7 +17,7 @@ class Create_tables:
                                 Age smallint not null unique,
                                 Email text not null unique,
                                 Password text not null unique,
-                                Created_at DATE not null
+                                Created_at timestamp not null
                                 )
             """
         
@@ -98,32 +99,32 @@ class Create_tables:
                 db.cursor.close()
 
     
-    def Add_users(self):
+    def Add_users(self,F_Name,L_Name,Age,Email,Password,Created_at):
         db = Databaseconnection()
         sql_stament = """insert into users (F_Name,L_Name,Age,Email,Password,Created_at)
-        values('OChom','Zaac',12,'f1ghjjk@mail.com','r4rhgfd',current_timestamp);"""
-        db.cursor.execute(sql_stament)
-        users = db.cursor.fetchall()
-        return users
+        values(%s,%s,%s,%s,%s,%s);"""
+        dataValue = (F_Name,L_Name,Age,Email,Password,Created_at)
+        db.cursor.execute(sql_stament,dataValue)
+        
 
-    def Add_task(self):
+    def Add_task(self,title,description,created_at):
         db = Databaseconnection()
         sql_stament = """insert into Tasks (title,description,created_at)values('Ochom_Andela','Isaac work done',current_timestamp);"""
-        db.cursor.execute(sql_stament)
-        users = db.cursor.fetchall()
-        return users
+        dataValue = (title,description,created_at)
+        db.cursor.execute(sql_stament,dataValue)
+        
 
-    def Add_Catagories(self):
+    def Add_Catagories(self,category_name,title,description,):
         db = Databaseconnection()
         sql_stament = """insert into Categories (category_name,title,description,created_at)values('Leve up','DBMS','Postgress python DBMS',current_timestamp);"""
-        db.cursor.execute(sql_stament)
-        users = db.cursor.fetchall()
-        return users
+        dataValue = (category_name,title,description,created_at)
+        db.cursor.execute(sql_stament,dataValue)
+        
 
     def select_user(self):
         db = Databaseconnection()
         sql_stament = """select * from users """
-        #sql_stament = """insert into Andela (name,age,gender,broke)values('{}','{}','{}','{}');"""
+        
         db.cursor.execute(sql_stament)
         users = db.cursor.fetchall()
         return users
@@ -131,70 +132,55 @@ class Create_tables:
     def select_task(self):
         db = Databaseconnection()
         sql_stament = """select * from tasks """
-        #sql_stament = """insert into Andela (name,age,gender,broke)values('{}','{}','{}','{}');"""
+        
         db.cursor.execute(sql_stament)
         users = db.cursor.fetchall()
         return users
 
-    def select_categories(self):
+    def select_categories(self):            
         db = Databaseconnection()
         sql_stament = """select * from Categories """
-        #sql_stament = """insert into Andela (name,age,gender,broke)values('{}','{}','{}','{}');"""
+
         db.cursor.execute(sql_stament)
         users = db.cursor.fetchall()
         return users
 
-    def Update_user(self):
+    def Update_user(self,F_name,L_name,Age,Email,Password,created_at,user_id):
         db = Databaseconnection()
-        sql_stament = """ UPDATE vendors
-                SET vendor_name = %s
-                WHERE vendor_id = %s"""
-        #sql_stament = """insert into Andela (name,age,gender,broke)values('{}','{}','{}','{}');"""
-        db.cursor.execute(sql_stament)
-        users = db.cursor.fetchall()
-        return users
+        sql_stament = """ UPDATE users
+                SET F_name = %s,L_name = %s,Age = %s,Email = %s,Password = %s,created_at = %s
+                WHERE user_id = %s"""
+        dataValue = (F_name,L_name,Age,Email,Password,created_at,user_id)
+        db.cursor.execute(sql_stament,dataValue)
+        
 
-    def Update_task(self):
+    def Update_task(self,title,description,task_id):
         db = Databaseconnection()
         sql_stament = """ UPDATE Tasks
                 SET title = %s,description = %s
                 WHERE task_id = %s"""
-        #sql_stament = """insert into Andela (name,age,gender,broke)values('{}','{}','{}','{}');"""
-        db.cursor.execute(sql_stament)
-        users = db.cursor.fetchall()
-        return users 
+        dataValue = (title,description,task_id)
+        db.cursor.execute(sql_stament,dataValue)
+       
 
 
-    def Update_Categories(self):
+    def Update_Categories(self,categories_name,title,description,categories_id):
         db = Databaseconnection()
         sql_stament = """ UPDATE Categories
                 SET categories_name = %s ,title = %s,description = %s
                 WHERE categories_id = %s"""
-        #sql_stament = """insert into Andela (name,age,gender,broke)values('{}','{}','{}','{}');"""
-        db.cursor.execute(sql_stament)
-        users = db.cursor.fetchall()
-        return users
+        dataValue = (categories_name,title,description,categories_id)
+        db.cursor.execute(sql_stament,dataValue)
+      
     def get_user_task(self,user_id):
         db = Databaseconnection()
         sql_stament = """ select a.task_id,a.title,b.title,a.description from Tasks a INNER JOIN Categories b ON a.task_id = b.task_id
                       """
-        #sql_stament = """insert into Andela (name,age,gender,broke)values('{}','{}','{}','{}');"""
-        db.cursor.execute(sql_stament)
+        dataValue = (user_id)
+        
+        db.cursor.execute(sql_stament,dataValue)
         users = db.cursor.fetchall()
         return users
 
    
 
-if __name__ == "__main__":
-    
-    
-    table = Create_tables()
-
-    table.create_table_Users()
-    table.create_table_Tasks()
-    table.create_table_Categories()
-    #table.Add_users()
-    user = table.select_user()
-    user_task = table.get_user_task(2)
-
-    print(user)
